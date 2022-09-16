@@ -1,16 +1,15 @@
-# TeamInfor 
-# A-team026-DDF4
+# Q-team026-DDF4
 
 ## Basic Information
 
-|   Info      |        Description     |
+|   Info      |       Description      |
 | ----------- | ---------------------- |
-| TeamID      |          team026       | 
-| TeamName    |         DDF4           |
+| TeamID      |         team026        | 
+| TeamName    |          DDF4          |
 | Captain     |     Haiyue Zhang       |
 | Captain     |  haiyuez2@illinois.edu |
 | Member1     |     Yuteng Zhuang      | 
-| Member1     | yutengz2@illinois.edu |
+| Member1     | yutengz2@illinois.edu  |
 | Member2     |        Chang Li        |
 | Member2     | changli8@illinois.edu  |
 | Member3     |        Raymond Wu      |
