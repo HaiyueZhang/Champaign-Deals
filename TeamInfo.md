@@ -9,8 +9,8 @@
 | TeamName    |         Ciffy          |
 | Captain     |       Sumin Cho        |
 | Captain     |  suminc2@illinois.edu  |
-| Member1     |      Rohan Bindu       |
-| Member1     |   bindu2@illinois.edu  |
+| Member1     |      Yuteng Zhuang       |
+| Member1     |   yutengz2@illinois.edu |
 | Member2     |      Faraaz Baig       |
 | Member2     |   fbaig5@illinois.edu  |
 | Member3     |   Krish Naik Aparaj    |
