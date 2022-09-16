@@ -1,20 +1,20 @@
-# TeamInfor
-# A-team018-ciffy
+# TeamInfor 
+# A-team026-DDF4
 
 ## Basic Information
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
-| TeamID      |        Team-018        |
-| TeamName    |         Ciffy          |
-| Captain     |       Sumin Cho        |
-| Captain     |  suminc2@illinois.edu  |
-| Member1     |      Yuteng Zhuang       |
-| Member1     |   yutengz2@illinois.edu |
-| Member2     |      Faraaz Baig       |
-| Member2     |   fbaig5@illinois.edu  |
-| Member3     |   Krish Naik Aparaj    |
-| Member3     |  krishn2@illinois.edu  |
+| TeamID      |          team026       | 
+| TeamName    |         DDF4           |
+| Captain     |     Haiyue Zhang       |
+| Captain     |  haiyuez2@illinois.edu |
+| Member1     |     Yuteng Zhuang      | 
+| Member1     | yutengz2@illinois.edu |
+| Member2     |        Chang Li        |
+| Member2     | changli8@illinois.edu  |
+| Member3     |        Raymond Wu      |
+| Member3     | haozhen6@illinois.edu  |
 
 ## Project Information
 
