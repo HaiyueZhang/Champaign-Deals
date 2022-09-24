@@ -25,6 +25,7 @@
 
 ## Project Summary
 
-  People in Champaign found it is hard to find buyers when they require to sell useless goods or items. Also, some people are willing to buy a used goods with a relatively low price. A used goods trading platform can help sellers post their used goods and let buyers find their preferred items.
-	To be specific, user can choose different categories under the search line, also they can search items with keywords, such as bicycle, car, sublease. When buyers find preferred items, they can make deal with sellers. Also, users can mark their preferred items as interests, which are collected in a favorite.
+People in Champaign found it is hard to find buyers when they require to sell useless goods or items. Also, some people are willing to buy a used goods with a relatively low price. A used goods trading platform can help sellers post their used goods and let buyers find their preferred items.
+
+To be specific, user can choose different categories under the search line, also they can search items with keywords, such as bicycle, car, sublease. When buyers find preferred items, they can make deal with sellers. Also, users can mark their preferred items as interests, which are collected in a favorite.
 
