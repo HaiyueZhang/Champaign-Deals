@@ -4,7 +4,7 @@ import { ItemOverview } from '../types/types';
 import Link from 'next/link';
 import {fetchItems} from "../utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {useState} from "react";
+import React, {useState} from "react";
 
 const ItemCard: React.FC<{ item: ItemOverview }> = ({ item }) => {
   return (
@@ -35,13 +35,13 @@ const ItemCard: React.FC<{ item: ItemOverview }> = ({ item }) => {
   )
 }
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   const items: ItemOverview[] = await fetchItems(0);
   return {
     props: {
       items,
     },
-  };
+  }
 }
 
 const Home: NextPage<{ items: ItemOverview[] }> = ({ items: originalItems }) => {
@@ -49,7 +49,8 @@ const Home: NextPage<{ items: ItemOverview[] }> = ({ items: originalItems }) => 
   const [page, setPage] = useState(0)
 
   const fetchMoreItems = async () => {
-    const { items: newItems } = await (await fetch("/api/items?page=" + (page + 1))).json()
+    const response = await fetch("/api/items?page=" + (page + 1))
+    const { items: newItems } = await response.json()
     setItems([...items, ...newItems])
     setPage(page + 1)
   }
@@ -68,7 +69,7 @@ const Home: NextPage<{ items: ItemOverview[] }> = ({ items: originalItems }) => 
         }
       >
         {items.map(item => (
-          <Box pb="30px">
+          <Box key={item.id} mb="30px">
             <ItemCard item={item}/>
           </Box>
         ))}

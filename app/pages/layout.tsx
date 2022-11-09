@@ -1,18 +1,20 @@
-import {Avatar, Box, Button, Input, InputGroup, InputLeftElement} from "@chakra-ui/react"
+import {Avatar, Box, Button, Flex, Input, InputGroup, InputLeftElement} from "@chakra-ui/react"
 import Link from "next/link"
 import styles from "../styles/layout.module.css"
 import {SearchIcon} from "@chakra-ui/icons";
 import React from "react";
+import {useRouter} from "next/router";
 
 const NavBar: React.FC = () => {
+  const [search, setSearch] = React.useState("");
+  const router = useRouter();
   return (
-    <Box
+    <Flex
       position="fixed"
       top={0}
       width="100%"
       height="65px"
-      zIndex={1000}
-      display="flex"
+      zIndex="banner"
       alignItems="center"
       pl="30px"
       pr="40px"
@@ -28,13 +30,20 @@ const NavBar: React.FC = () => {
       </Box>
       <Box mr="20px">
         <InputGroup>
-          <InputLeftElement
-            pointerEvents='none'
-          >
+          <InputLeftElement pointerEvents='none'>
             <SearchIcon color='gray.300'/>
           </InputLeftElement>
-          <Input placeholder='Search'/>
+          <Input
+            placeholder='Search'
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </InputGroup>
+      </Box>
+      <Box style={{}} mr="20px">
+        <Button colorScheme="blue" size="md" onClick={() => router.push("/search?keyword=" + search)}>
+          Search
+        </Button>
       </Box>
       <Box>
         <Link href={"/discover"}>
@@ -59,7 +68,7 @@ const NavBar: React.FC = () => {
       <Box>
         <Avatar/>
       </Box>
-    </Box>
+    </Flex>
   )
 }
 

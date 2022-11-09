@@ -27,3 +27,11 @@ function query(sql: string, params: any[] = []): Promise<any> {
 export async function fetchItems(page: number): Promise<ItemOverview[]> {
   return await query("SELECT * FROM Item ORDER BY publishDate DESC LIMIT 20 OFFSET ?", [page * 20])
 }
+
+export async function fetchItem(id: number): Promise<ItemOverview> {
+  return await query("SELECT * FROM Item WHERE id = ?", [id])
+}
+
+export async function searchItem(keyword: string): Promise<ItemOverview[]> {
+  return await query("SELECT * FROM Item WHERE name LIKE ? OR description LIKE ? ORDER BY publishDate DESC", [`%${keyword}%`, `%${keyword}%`])
+}
