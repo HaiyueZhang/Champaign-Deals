@@ -25,5 +25,5 @@ function query(sql: string, params: any[] = []): Promise<any> {
 }
 
 export async function fetchItems(page: number): Promise<ItemOverview[]> {
-  return await query("SELECT * FROM Item ORDER BY publishDate DESC LIMIT 20 OFFSET ?", [page * 10])
+  return await query("SELECT * FROM Item ORDER BY publishDate DESC LIMIT 20 OFFSET ?", [page * 20])
 }

@@ -1,11 +1,14 @@
 import { NextPage } from "next";
+import {useRouter} from "next/router";
 
 const ItemEdit: NextPage = () => {
-    return (
-        <>
-            Edit Item
-        </>
-    )
+  const router = useRouter()
+  const { id } = router.query
+  return (
+    <>
+      Edit Item {id}
+    </>
+  )
 }
 
 export default ItemEdit;

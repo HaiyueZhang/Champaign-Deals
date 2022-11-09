@@ -49,6 +49,13 @@ const NavBar: React.FC = () => {
           </Button>
         </Link>
       </Box>
+      <Box style={{}} mr="20px">
+        <Link href={"/item/manage"}>
+          <Button size="md">
+            Manage Items
+          </Button>
+        </Link>
+      </Box>
       <Box>
         <Avatar/>
       </Box>

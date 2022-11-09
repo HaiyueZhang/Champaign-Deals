@@ -20,7 +20,7 @@ const ItemCard: React.FC<{ item: ItemOverview }> = ({ item }) => {
             {item.name}
           </Heading>
           <Box flex={1}/>
-          <Heading size="md" noOfLines={1} textAlign="right" w="150px">
+          <Heading size="md" noOfLines={1} textAlign="right" w="250px">
             ${item.price}
           </Heading>
         </Flex>
