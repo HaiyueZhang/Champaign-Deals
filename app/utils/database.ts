@@ -1,14 +1,14 @@
 import mysql from 'mysql'
-import {ItemOverview} from "../types/types";
+import {ItemOverview, TokenUserInfo, User} from "../types/types";
 
 const db = mysql.createConnection({
-  host: process.env.NEXT_PUBLIC_MYSQL_HOST,
-  user: process.env.NEXT_PUBLIC_MYSQL_USER,
-  password: process.env.NEXT_PUBLIC_MYSQL_PASSWORD,
-  database: process.env.NEXT_PUBLIC_MYSQL_DATABASE
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE
 })
 
-function query(sql: string, params: any[] = []): Promise<any> {
+function query<T>(sql: string, params: any[] = []): Promise<T> {
   return new Promise((resolve, reject) => {
     db.query(
       sql,
@@ -22,6 +22,18 @@ function query(sql: string, params: any[] = []): Promise<any> {
       }
     )
   })
+}
+
+export async function getUserFromEmail(email: string): Promise<User | null> {
+  const users = await query<User[]>(`SELECT * FROM User WHERE email = ?`, [email]);
+  if (users.length === 0) {
+    return null;
+  }
+  return users[0];
+}
+
+export async function insertUser(user: TokenUserInfo): Promise<User> {
+  return await query(`INSERT INTO User (id, email, name, description) SELECT MAX(id) + 1, ?, ?, ? FROM User`, [user.email, user.name, ""]);
 }
 
 export async function fetchItems(page: number): Promise<ItemOverview[]> {
