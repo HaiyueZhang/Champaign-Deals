@@ -1,19 +1,11 @@
 import {NextPage} from "next";
 import {useRouter} from "next/router";
-import {searchItem} from "../utils/database";
 import {ItemOverview} from "../types/types";
 import {Box, Container, Flex, Heading, Text} from "@chakra-ui/react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import React, {useState} from "react";
+import React from "react";
+import useSWR from "swr";
+import axios, {AxiosResponse} from "axios";
 
-export const getServerSideProps = async (context: any) => {
-  const items = await searchItem(context.query.keyword);
-  return {
-    props: {
-      items,
-    }
-  }
-}
 const SearchCard: React.FC<{ item: ItemOverview }> = ({ item }) => {
   return (
       <Box
@@ -40,41 +32,37 @@ const SearchCard: React.FC<{ item: ItemOverview }> = ({ item }) => {
       </Box>
   )
 }
-  
 
-const Search: NextPage<{ items: ItemOverview[] }> = ({ items:originalItems }) => {
+const useSearchResult = (query: string) => {
+  const { data, error } = useSWR<AxiosResponse>('/api/items/search?keyword=' + query, axios.get)
+  return {
+    items: data?.data.list,
+    isLoading: !error && !data,
+    isError: error
+  }
+}
+
+const Search: NextPage = () => {
   const router = useRouter()
   const { keyword } = router.query
-  const [items, setItems] = useState(originalItems)
-  const [page, setPage] = useState(0)
-  const fetchMoreItems = async () => {
-    const response = await fetch("/api/items?page=" + (page + 1))
-    const { items: newItems } = await response.json()
-    setItems([...items, ...newItems])
-    setPage(page + 1)
-  }
+  const { items, isLoading, isError } = useSearchResult(keyword as string)
 
   return (
-    
     <Container centerContent py="40px">
-      Searching for "{keyword}"
-      <InfiniteScroll
-        dataLength={items.length} //This is important field to render the next data
-        next={fetchMoreItems}
-        hasMore={true}
-        loader={<h4>Loading...</h4>}
-        endMessage={
-          <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all</b>
-          </p>
-        }
-      >
-        {items.map(item => (
-          <Box key={item.id} mb="30px">
-            <SearchCard item={item}/>
+      {isLoading && <Text>Loading...</Text>}
+      {isError && <Text>Error</Text>}
+      {items && (
+        <>
+          <Box mb="20px">
+            Searching for "{keyword}"
           </Box>
-        ))}
-        </InfiniteScroll>
+          {items.map((item: ItemOverview) => (
+            <Box key={item.id} mb="30px">
+              <SearchCard item={item}/>
+            </Box>
+          ))}
+        </>
+      )}
     </Container>
   )
 }
