@@ -7,3 +7,13 @@ export interface ItemOverview {
   publisherName: string
   publishDate: string
 }
+
+
+export interface DiscoverOverview{
+  sellerName: string
+  id: number
+  turnover: number
+
+  name: string
+  Num_Item:number
+}
