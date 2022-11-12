@@ -1,13 +1,11 @@
 import { NextPage } from "next";
-import {useRouter} from "next/router";
 import {bestSeller, cheapCategory} from "../utils/database";
 import {Button} from "@chakra-ui/react";
 import {DiscoverOverview} from "../types/types";
 import React, {useState} from "react";
 import {Box, Container, Flex, Heading, Text} from "@chakra-ui/react";
 
-
-export const getServerSideProps = async (context: any) => {
+export const getServerSideProps = async () => {
   const sellers = await bestSeller();
   const cheaps = await cheapCategory();
   return {
@@ -16,7 +14,6 @@ export const getServerSideProps = async (context: any) => {
     }
   }
 }
-
 
 const SellerCard: React.FC<{ seller: DiscoverOverview }> = ({ seller }) => {
   return (
@@ -30,14 +27,13 @@ const SellerCard: React.FC<{ seller: DiscoverOverview }> = ({ seller }) => {
           <Heading size="md" noOfLines={1}>
             {seller.sellerName}
           </Heading>
+          <Text fontSize="14px" noOfLines={1}>
+          id:{seller.id}
+        </Text>
           <Box flex={1}/>
           <Heading size="md" noOfLines={1} textAlign="right" w="250px">
             ${seller.turnover}
           </Heading>
-          
-          <Text fontSize="14px" noOfLines={1}>
-          id:{seller.id}
-        </Text>
         </Flex>
       </Box>
   )
@@ -70,16 +66,16 @@ const Discover: NextPage <{ sellers: DiscoverOverview[], cheaps: DiscoverOvervie
   const [page, setPage] = useState(1);
   return (
     <Container centerContent py="40px">
-      <Box>
-        <Button colorScheme='blue' onClick={() => setPage(1)}>BestSeller </Button>
-        <Button colorScheme='blue' onClick={() => setPage(2)}>CheapCategory </Button>
+      <Box mb="30px">
+        <Button colorScheme={page === 1 ? 'blue' : 'gray'} onClick={() => setPage(1)} mr="20px">BestSeller </Button>
+        <Button colorScheme={page === 2 ? 'blue' : 'gray'} onClick={() => setPage(2)}>CheapCategory </Button>
       </Box>
-      {page == 1 && sellers.map(seller => (
+      {page === 1 && sellers.map(seller => (
         <Box key={seller.id} mb="30px">
             <SellerCard seller={seller}/>
         </Box>
       ))}
-      {page == 2 && cheaps.map(cheap => (
+      {page === 2 && cheaps.map(cheap => (
         <Box key={cheap.name} mb="30px">
           <CheapCard cheap={cheap}/>
         </Box>
