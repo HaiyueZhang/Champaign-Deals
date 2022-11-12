@@ -30,14 +30,13 @@ const SellerCard: React.FC<{ seller: DiscoverOverview }> = ({ seller }) => {
           <Heading size="md" noOfLines={1}>
             {seller.sellerName}
           </Heading>
+          <Text fontSize="14px" noOfLines={1}>
+          id:{seller.id}
+        </Text>
           <Box flex={1}/>
           <Heading size="md" noOfLines={1} textAlign="right" w="250px">
             ${seller.turnover}
           </Heading>
-          
-          <Text fontSize="14px" noOfLines={1}>
-          id:{seller.id}
-        </Text>
         </Flex>
       </Box>
   )
