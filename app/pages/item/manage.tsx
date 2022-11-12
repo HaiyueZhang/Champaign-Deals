@@ -3,11 +3,12 @@ import {ItemOverview} from "../../types/types";
 import {AxiosResponse} from "axios";
 import useSWR from "swr";
 import request from "../../utils/request";
+import Link from "next/link";
 
 const usePublishedItems = () => {
   const { data, error } = useSWR<AxiosResponse>('/api/items/published', request.get);
   return {
-    items: data?.data.items,
+    items: data?.data.list,
     isLoading: !error && !data,
     isError: error
   }
@@ -25,7 +26,7 @@ const ItemManage: NextPage = () => {
       {isError && <div>Error</div>}
       {items && items.map((item: ItemOverview) => (
         <>
-          <div>{item.name}</div>
+          <Link href={`/item/edit/${item.id}`}>{item.name}</Link>
         </>
       ))}
     </>

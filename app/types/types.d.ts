@@ -12,15 +12,23 @@ export interface TokenUserInfo {
   picture: string
 }
 
+export interface ItemInfo {
+  id?: number
+  name: string
+  description: string
+  price: number
+  sellerId: string
+  publishDate: string
+}
+
 export interface ItemOverview {
   id: number
   name: string
   description: string
   price: number
-  publisherName: string
+  sellerName: string
   publishDate: string
 }
-
 
 export interface DiscoverOverview{
   sellerName: string

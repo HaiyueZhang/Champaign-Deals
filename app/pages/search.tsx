@@ -33,7 +33,7 @@ const SearchCard: React.FC<{ item: ItemOverview }> = ({ item }) => {
           {item.description}
         </Text>
         <Text fontSize="14px" noOfLines={1}>
-          published by {item.publisherName} on {item.publishDate}
+          published by {item.sellerName} on {item.publishDate}
         </Text>
       </Box>
   )
