@@ -26,6 +26,8 @@ import {AxiosResponse} from "axios";
 import request from "../utils/request";
 import {FocusableElement} from "@chakra-ui/utils";
 
+const GIS_CLIENT_ID = process.env.NEXT_PUBLIC_GIS_CLIENT_ID as string
+
 const useUserInfo = () => {
   const response = useSWR<AxiosResponse>('/api/user', request.get)
   return {
@@ -127,7 +129,7 @@ const UserActions: React.FC = () => {
               }}
             />
             <div id="g_id_onload"
-                 data-client_id="1016781944203-oo8ijgpmlhug2sce9o37f4jul14e258u.apps.googleusercontent.com"
+                 data-client_id={GIS_CLIENT_ID}
                  data-callback="handleToken"
                  data-auto_prompt="true"
             />

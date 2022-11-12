@@ -40,6 +40,14 @@ export async function fetchItems(page: number): Promise<ItemOverview[]> {
   return await query("SELECT * FROM Item ORDER BY publishDate DESC LIMIT 20 OFFSET ?", [page * 20])
 }
 
+export async function fetchPublishedItems(userId: number): Promise<ItemOverview[]> {
+  return await query("SELECT * FROM Item WHERE sellerId = ? ORDER BY publishDate DESC", [userId])
+}
+
+export async function deleteItem(userId: number, itemId: number): Promise<void> {
+  await query("DELETE FROM Item WHERE sellerId = ? AND id = ?", [userId, itemId]);
+}
+
 export async function fetchItem(id: number): Promise<ItemOverview> {
   return await query("SELECT * FROM Item WHERE id = ?", [id])
 }
