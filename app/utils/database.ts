@@ -81,27 +81,27 @@ export async function searchItem(keyword: string): Promise<ItemOverview[]> {
 
 export async function bestSeller(){
   return await query(`
-    (SELECT u.id, u.name as sellerName, SUM(Price) as turnover
+    SELECT u.id, u.name as sellerName, SUM(I.price) as turnover
     FROM project.User u JOIN project.Transaction T ON (u.id = T.sellerId) JOIN project.Item I  USING (id) 
     WHERE EXISTS(
         SELECT *
         FROM project.User u2 JOIN project.Item I2  USING (id)
-        WHERE publishDate >= 2020 AND u2.id = u.id AND T.status = "completed"
+        WHERE publishDate >= 2020 AND u2.id = u.id AND T.status = 'completed'
     )
-    GROUP BY u.id)
-    
+    GROUP BY u.id
+
     UNION
     
-    (SELECT u.id, u.name as sellerName, SUM(Price) as turnover
+    SELECT u.id, u.name as sellerName, SUM(I.price) as turnover
     FROM project.User u JOIN project.Item I  USING (id) JOIN project.Transaction T ON (I.id = T.sellerId)
     WHERE EXISTS(
       SELECT T.sellerId
       FROM project.Item I2 JOIN project.Comment c ON (I2.id = c.id) JOIN project.Transaction T ON (I2.id = T.sellerId)
-        WHERE T.status = "completed"
+        WHERE T.status = 'completed'
       GROUP BY T.sellerId
       HAVING COUNT(*) > 3
     )
-    GROUP BY u.id)
+    GROUP BY u.id
     
     ORDER BY turnover DESC
     LIMIT 20;
