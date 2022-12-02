@@ -43,5 +43,6 @@ export interface DiscoverOverview{
 export interface BoughtOverview{
   name: string
   price: number
+  origin_price : number
   boughtDate: string
 }

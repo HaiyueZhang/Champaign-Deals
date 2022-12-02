@@ -89,7 +89,7 @@ export async function fetchItems(page: number): Promise<ItemOverview[]> {
 }
 
 export async function fetchBoughtItems(userId: number): Promise<ItemOverview[]> {
-  return await query("SELECT T.price, T.date, I.name FROM Transaction T JOIN Item I ON (T.itemId = I.id) WHERE T.buyerId = ? ORDER BY date DESC", [userId])
+  return await query("SELECT T.price, I.price, T.date, I.name FROM Transaction T JOIN Item I ON (T.itemId = I.id) WHERE T.buyerId = ? ORDER BY date DESC", [userId])
 }
 
 export async function fetchPublishedItems(userId: number): Promise<ItemOverview[]> {
