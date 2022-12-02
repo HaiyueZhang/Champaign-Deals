@@ -29,17 +29,19 @@ const ManageCard: React.FC<{bought: BoughtOverview}> = ({ bought }) => {
           {bought.name}
         </Heading>
         <Box flex={1}/>
-        <Heading size="md" noOfLines={1} textAlign="right" w="250px">
-          {bought.price === bought.price ? (
+        <Heading size="md" noOfLines={2} textAlign="right" w="250px">
+          {bought.price === bought.origin_price ? (
             <>
               ${bought.price}
             </>
           ) : (
             <>
               <Box textDecoration="line-through">
+                ${bought.origin_price}
+              </Box>
+              <Box>
                 ${bought.price}
               </Box>
-              ${bought.price}
             </>
           )}
         </Heading>
