@@ -183,8 +183,8 @@ export async function buyItem(userId: number, itemId: number): Promise<void> {
         SELECT price FROM Item WHERE id = ?
     `, [itemId]) as any
     await query(`
-      INSERT INTO Transaction (buyerId, itemId, sellerId, status, price)
-        SELECT ?, I.id, I.sellerId, 'completed', ? FROM Item I WHERE I.id = ?
+      INSERT INTO Transaction (buyerId, itemId, sellerId, status, price, date)
+        SELECT ?, I.id, I.sellerId, 'completed', NOW(), ? FROM Item I WHERE I.id = ?
     `, [userId, price, itemId])
     await query(`
       UPDATE Item SET status = 'sold out' WHERE id = ?

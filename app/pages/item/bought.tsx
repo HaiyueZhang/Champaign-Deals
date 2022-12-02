@@ -3,16 +3,15 @@ import {BoughtOverview} from "../../types/types";
 import {AxiosResponse} from "axios";
 import useSWR from "swr";
 import request from "../../utils/request";
-import {Box, Button, Container, Flex, Heading, Text} from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import {Box, Container, Flex, Heading, Text} from "@chakra-ui/react";
+import React from "react";
 
 const useBoughtItems = () => {
-  const { data, error, mutate } = useSWR<AxiosResponse>('/api/items/bought', request.get);
+  const { data, error } = useSWR<AxiosResponse>('/api/items/bought', request.get);
   return {
     items: data?.data.list,
     isLoading: !error && !data,
     isError: error,
-    // updateItems: mutate
   }
 }
 
@@ -26,12 +25,23 @@ const ManageCard: React.FC<{bought: BoughtOverview}> = ({ bought }) => {
       p="20px"
     >
       <Flex flexDirection="row" mb="10px">
-        <Heading size="md" noOfLines={1}>
+        <Heading size="md" noOfLines={2}>
           {bought.name}
         </Heading>
         <Box flex={1}/>
         <Heading size="md" noOfLines={1} textAlign="right" w="250px">
-          ${bought.price}
+          {bought.price === bought.price ? (
+            <>
+              ${bought.price}
+            </>
+          ) : (
+            <>
+              <Box textDecoration="line-through">
+                ${bought.price}
+              </Box>
+              ${bought.price}
+            </>
+          )}
         </Heading>
       </Flex>
       <Flex flexDirection="row" alignItems="center">
@@ -46,7 +56,6 @@ const ManageCard: React.FC<{bought: BoughtOverview}> = ({ bought }) => {
 
 const BoughtView: NextPage = () => {
     const { items, isLoading, isError } = useBoughtItems();
-    const router = useRouter();
     return (
       <>
         {isLoading && <div>Loading...</div>}

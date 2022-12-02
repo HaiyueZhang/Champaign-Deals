@@ -31,7 +31,7 @@ export interface ItemOverview {
   publishDate: string
 }
 
-export interface DiscoverOverview{
+export interface DiscoverOverview {
   sellerName: string
   id: number
   turnover: number
@@ -40,7 +40,7 @@ export interface DiscoverOverview{
   Num_Item:number
 }
 
-export interface BoughtOverview{
+export interface BoughtOverview {
   name: string
   price: number
   boughtDate: string
