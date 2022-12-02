@@ -1,37 +1,59 @@
 import type { NextPage } from 'next';
-import {Box, Container, Flex, Heading, Text} from "@chakra-ui/react";
+import {Box, Button, Container, Flex, Heading, Spinner, Text} from "@chakra-ui/react";
 import { ItemOverview } from '../types/types';
-import Link from 'next/link';
 import {fetchItems} from "../utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
 import React, {useState} from "react";
+import request from "../utils/request";
+import {ConfirmPopover} from "../components/confirm";
 
-const ItemCard: React.FC<{ item: ItemOverview }> = ({ item }) => {
+const ItemCard: React.FC<{ item: ItemOverview, onBuyItem?: () => Promise<any> }> = ({ item, onBuyItem }) => {
+  const [loading, setLoading] = useState(false);
   return (
-    <Link href={`/item/${item.id}`}>
-      <Box
-        border="1px solid lightgray"
-        w="800px"
-        h="160px"
-        p="20px"
-      >
-        <Flex flexDirection="row" mb="10px">
-          <Heading size="md" noOfLines={1}>
-            {item.name}
-          </Heading>
-          <Box flex={1}/>
-          <Heading size="md" noOfLines={1} textAlign="right" w="250px">
-            ${item.price}
-          </Heading>
-        </Flex>
-        <Text noOfLines={2} mb="10px" height="50px">
-          {item.description}
-        </Text>
+    <Box
+      border="1px solid lightgray"
+      w="800px"
+      h="160px"
+      p="20px"
+    >
+      <Flex flexDirection="row" mb="10px">
+        <Heading size="md" noOfLines={1}>
+          {item.name}
+        </Heading>
+        <Box flex={1}/>
+        <Heading size="md" noOfLines={1} textAlign="right" w="250px">
+          ${item.price}
+        </Heading>
+      </Flex>
+      <Text noOfLines={2} mb="10px" height="50px">
+        {item.description}
+      </Text>
+      <Flex flexDirection="row" alignItems="center">
         <Text fontSize="14px" noOfLines={1}>
           published by {item.sellerName} on {item.publishDate}
         </Text>
-      </Box>
-    </Link>
+        <Box flex={1}/>
+        {!loading ? (
+          <ConfirmPopover
+            title="Confirm purchase"
+            message="Are you sure you want to purchase this item?"
+            onConfirm={async () => {
+              setLoading(true);
+              await onBuyItem?.();
+              setLoading(false);
+            }}
+            confirmButtonColorScheme="orange"
+            confirmButtonText="Confirm Buy"
+          >
+            <Button colorScheme="orange" size="sm">
+              Buy item
+            </Button>
+          </ConfirmPopover>
+        ) : (
+          <Spinner color="blue"/>
+        )}
+      </Flex>
+    </Box>
   )
 }
 
@@ -70,7 +92,9 @@ const Home: NextPage<{ items: ItemOverview[] }> = ({ items: originalItems }) => 
       >
         {items.map(item => (
           <Box key={item.id} mb="30px">
-            <ItemCard item={item}/>
+            <ItemCard item={item} onBuyItem={async () => {
+              await request.post(`/api/items/buy?id=${item.id}`)
+            }}/>
           </Box>
         ))}
       </InfiniteScroll>

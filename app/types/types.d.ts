@@ -19,6 +19,7 @@ export interface ItemInfo {
   price: number
   sellerId: string
   publishDate: string
+  status?: ItemStatus
 }
 
 export interface ItemOverview {
