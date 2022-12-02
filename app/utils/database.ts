@@ -24,6 +24,48 @@ function query<T>(sql: string, params: any[] = []): Promise<T> {
   })
 }
 
+function beginTransaction(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.beginTransaction(
+      (error) => {
+        if (!error) {
+          resolve()
+        } else {
+          reject(error)
+        }
+      }
+    )
+  })
+}
+
+function commit(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.commit(
+      (error) => {
+        if (!error) {
+          resolve()
+        } else {
+          reject(error)
+        }
+      }
+    )
+  })
+}
+
+function rollback(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.rollback(
+      (error) => {
+        if (!error) {
+          resolve()
+        } else {
+          reject(error)
+        }
+      }
+    )
+  })
+}
+
 export async function getUserFromEmail(email: string): Promise<User | null> {
   const users = await query<User[]>(`SELECT * FROM User WHERE email = ?`, [email]);
   if (users.length === 0) {
@@ -37,7 +79,13 @@ export async function insertUser(user: TokenUserInfo): Promise<User> {
 }
 
 export async function fetchItems(page: number): Promise<ItemOverview[]> {
-  return await query("SELECT I.*, U.name AS sellerName FROM Item I JOIN User U ON I.sellerId = U.id ORDER BY publishDate DESC LIMIT 20 OFFSET ?", [page * 20])
+  return await query(`
+    SELECT I.*, U.name AS sellerName
+      FROM Item I JOIN User U ON I.sellerId = U.id
+      WHERE I.status = 'available'
+      ORDER BY publishDate DESC
+      LIMIT 20 OFFSET ?
+  `, [page * 20])
 }
 
 export async function fetchPublishedItems(userId: number): Promise<ItemOverview[]> {
@@ -46,8 +94,8 @@ export async function fetchPublishedItems(userId: number): Promise<ItemOverview[
 
 export async function insertItem(item: ItemInfo): Promise<void> {
   await query(`
-    INSERT INTO Item (id, name, description, price, sellerId, publishDate, locationId, categoryId)
-      SELECT MAX(id) + 1, ?, ?, ?, ?, ?, 1, 1 FROM Item`,
+    INSERT INTO Item (id, name, description, price, sellerId, publishDate, locationId, categoryId, status)
+      SELECT MAX(id) + 1, ?, ?, ?, ?, ?, 1, 1, 'available' FROM Item`,
     [item.name, item.description, item.price, item.sellerId, item.publishDate])
 }
 
@@ -109,13 +157,38 @@ export async function bestSeller(){
 }
 
 export async function cheapCategory() {
-  return await query(`SELECT c.name, COUNT(*) AS Num_Item
-  FROM project.Category c JOIN (
-    SELECT i.id, i.categoryId FROM project.Item i
-       WHERE i.price < 5 AND i.status = 'available'
-  ) as subtable ON c.id = subtable.categoryId
-  GROUP BY c.name
-  ORDER BY Num_Item DESC
-  LIMIT 20;
+  return await query(`
+    SELECT c.name, COUNT(*) AS Num_Item
+    FROM project.Category c JOIN (
+      SELECT i.id, i.categoryId FROM project.Item i
+         WHERE i.price < 5 AND i.status = 'available'
+    ) as subtable ON c.id = subtable.categoryId
+    GROUP BY c.name
+    ORDER BY Num_Item DESC
+    LIMIT 20;
   `)
+}
+
+export async function buyItem(userId: number, itemId: number): Promise<void> {
+  await query(`
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+  `);
+  await beginTransaction()
+  try {
+    let [{ price }] = await query(`
+        SELECT price FROM Item WHERE id = ?
+    `, [itemId]) as any
+    await query(`
+      INSERT INTO Transaction (buyerId, itemId, sellerId, status, price)
+        SELECT ?, I.id, I.sellerId, 'completed', ? FROM Item I WHERE I.id = ?
+    `, [userId, price, itemId])
+    await query(`
+      UPDATE Item SET status = 'sold out' WHERE id = ?
+    `, [itemId])
+    await commit()
+  } catch (e) {
+    console.log("Rollback: ")
+    console.log(e)
+    await rollback()
+  }
 }

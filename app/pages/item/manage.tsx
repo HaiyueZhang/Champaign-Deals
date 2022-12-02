@@ -3,8 +3,12 @@ import {ItemInfo} from "../../types/types";
 import {AxiosResponse} from "axios";
 import useSWR from "swr";
 import request from "../../utils/request";
-import {Box, Button, Container, Flex, Heading, Text} from "@chakra-ui/react";
+import {
+  Box, Button, Container, Flex, Heading, Spinner, Tag, Text
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import React from "react";
+import {ConfirmPopover} from "../../components/confirm";
 
 const usePublishedItems = () => {
   const { data, error, mutate } = useSWR<AxiosResponse>('/api/items/published', request.get);
@@ -35,9 +39,15 @@ const ManageCard: React.FC<ManageCardProps> = ({ item, onUpdate, onDelete }) => 
       p="20px"
     >
       <Flex flexDirection="row" mb="10px">
-        <Heading size="md" noOfLines={1}>
+        <Heading size="md" noOfLines={1} mr="10px">
           {item.name}
         </Heading>
+        {item.status === 'available' && (
+          <Tag colorScheme="green">Available</Tag>
+        )}
+        {item.status === 'sold out' && (
+          <Tag colorScheme="red">Sold Out</Tag>
+        )}
         <Box flex={1}/>
         <Heading size="md" noOfLines={1} textAlign="right" w="250px">
           ${item.price}
@@ -54,9 +64,17 @@ const ManageCard: React.FC<ManageCardProps> = ({ item, onUpdate, onDelete }) => 
         <Button size="sm" mr="12px" onClick={() => onUpdate(item.id!)}>
           Update
         </Button>
-        <Button size="sm" colorScheme='red' onClick={() => onDelete(item.id!)}>
-          Delete
-        </Button>
+        <ConfirmPopover
+          title="Delete item"
+          message="Are you sure you want to delete this item?"
+          onConfirm={() => onDelete(item.id!)}
+          confirmButtonColorScheme="red"
+          confirmButtonText="Delete"
+        >
+          <Button size="sm" colorScheme='red'>
+            Delete
+          </Button>
+        </ConfirmPopover>
       </Flex>
     </Box>
   )
@@ -67,7 +85,17 @@ const ItemManage: NextPage = () => {
   const router = useRouter();
   return (
     <>
-      {isLoading && <div>Loading...</div>}
+      {isLoading && (
+        <Container centerContent py="100px">
+          <Spinner
+            thickness='4px'
+            speed='0.65s'
+            emptyColor='gray.200'
+            color='blue.500'
+            size='xl'
+          />
+        </Container>
+      )}
       {isError && <div>Error</div>}
       {items && (
         <Container centerContent py="40px">
@@ -83,6 +111,11 @@ const ItemManage: NextPage = () => {
               />
             </Box>
           ))}
+        </Container>
+      )}
+      {items && items.length == 0 && (
+        <Container centerContent py="40px">
+          <Text fontSize="xl">You have not published any items yet.</Text>
         </Container>
       )}
     </>
