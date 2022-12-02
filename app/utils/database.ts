@@ -89,7 +89,11 @@ export async function fetchItems(page: number): Promise<ItemOverview[]> {
 }
 
 export async function fetchBoughtItems(userId: number): Promise<ItemOverview[]> {
-  return await query("SELECT T.price, I.price as origin_price, T.date as boughtDate, I.name FROM Transaction T JOIN Item I ON (T.itemId = I.id) WHERE T.buyerId = ? ORDER BY date DESC", [userId])
+  return await query(`
+    SELECT T.price, I.price as origin_price, T.date as boughtDate, I.name
+      FROM Transaction T JOIN Item I ON (T.itemId = I.id)
+      WHERE T.buyerId = ? ORDER BY date DESC
+  `, [userId])
 }
 
 export async function fetchPublishedItems(userId: number): Promise<ItemOverview[]> {
@@ -173,6 +177,9 @@ export async function cheapCategory() {
   `)
 }
 
+const DISCOUNT_PRICE = 1000;
+const DISCOUNT_DATE_BEFORE = "'2020-01-01 00:00:00'";
+
 export async function buyItem(userId: number, itemId: number): Promise<void> {
   await query(`
     SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
@@ -182,10 +189,40 @@ export async function buyItem(userId: number, itemId: number): Promise<void> {
     let [{ price }] = await query(`
         SELECT price FROM Item WHERE id = ?
     `, [itemId]) as any
+    const [{ totalPrice }] = await query(`
+      SELECT SUM(price) AS totalPrice FROM Transaction WHERE buyerId = ?
+    `, [userId]) as any
+    console.log(totalPrice)
+    if (totalPrice > DISCOUNT_PRICE) {  // give discount to users who have spent in total more than DISCOUNT_PRICE
+      // check if the user has bought an item in the same category before
+      const [{ boughtCategory }] = await query(`
+        SELECT COUNT(*) AS boughtCategory FROM Item
+          WHERE id = ? AND categoryId IN (
+            SELECT I.categoryId
+              FROM Transaction T JOIN Item I ON T.itemId = I.id
+              WHERE T.buyerId = ?
+          )
+      `, [itemId, userId]) as any;
+      console.log(boughtCategory)
+      if (boughtCategory > 0) {  // give discount to users who have bought an item in the same category before
+        price = (price * 0.9).toFixed(2);
+      }
+    } else {
+      const [{ boughtRecent }] = await query(`
+        SELECT COUNT(*) AS boughtRecent FROM Transaction T JOIN (
+            SELECT * FROM Item WHERE publishDate > ${DISCOUNT_DATE_BEFORE}
+        ) I on I.id = T.itemId WHERE T.buyerId = ?
+      `, [userId]) as any;
+      console.log(boughtRecent)
+      if (boughtRecent <= 2) {  // give discount to users who have bought an item in the same category before
+        price = (price * 0.8).toFixed(2);
+      }
+    }
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ')
     await query(`
       INSERT INTO Transaction (buyerId, itemId, sellerId, status, price, date)
-        SELECT ?, I.id, I.sellerId, 'completed', NOW(), ? FROM Item I WHERE I.id = ?
-    `, [userId, price, itemId])
+        SELECT ?, I.id, I.sellerId, 'completed', ?, ? FROM Item I WHERE I.id = ?
+    `, [userId, price, now, itemId])
     await query(`
       UPDATE Item SET status = 'sold out' WHERE id = ?
     `, [itemId])

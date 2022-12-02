@@ -6,6 +6,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import React, {useState} from "react";
 import request from "../utils/request";
 import {ConfirmPopover} from "../components/confirm";
+import {useRouter} from "next/router";
 
 const ItemCard: React.FC<{ item: ItemOverview, onBuyItem?: () => Promise<any> }> = ({ item, onBuyItem }) => {
   const [loading, setLoading] = useState(false);
@@ -69,6 +70,7 @@ export const getServerSideProps = async () => {
 const Home: NextPage<{ items: ItemOverview[] }> = ({ items: originalItems }) => {
   const [items, setItems] = useState(originalItems)
   const [page, setPage] = useState(0)
+  const router = useRouter();
 
   const fetchMoreItems = async () => {
     const response = await fetch("/api/items?page=" + (page + 1))
@@ -94,6 +96,7 @@ const Home: NextPage<{ items: ItemOverview[] }> = ({ items: originalItems }) => 
           <Box key={item.id} mb="30px">
             <ItemCard item={item} onBuyItem={async () => {
               await request.post(`/api/items/buy?id=${item.id}`)
+              await router.push(`/item/bought`)
             }}/>
           </Box>
         ))}
