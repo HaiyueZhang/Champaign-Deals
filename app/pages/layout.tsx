@@ -70,6 +70,21 @@ const UserActions: React.FC = () => {
         </AlertDialogOverlay>
       </AlertDialog>
 
+
+      <Box style={{}} mr="20px">
+        <Button colorScheme="blue" size="md" onClick={() => {
+          if (!isLoading) {
+            if (isLoggedIn) {
+              router.push("/item/bought")
+            } else {
+              onOpen()
+            }
+          }
+        }}>
+          Purchase History
+        </Button>
+      </Box>
+
       <Box style={{}} mr="20px">
         <Button colorScheme="blue" size="md" onClick={() => {
           if (!isLoading) {

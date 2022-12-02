@@ -40,6 +40,10 @@ export async function fetchItems(page: number): Promise<ItemOverview[]> {
   return await query("SELECT I.*, U.name AS sellerName FROM Item I JOIN User U ON I.sellerId = U.id ORDER BY publishDate DESC LIMIT 20 OFFSET ?", [page * 20])
 }
 
+export async function fetchBoughtItems(userId: number): Promise<ItemOverview[]> {
+  return await query("SELECT T.price, T.date, I.name FROM Transaction T JOIN Item I ON (T.itemId = I.id) WHERE T.buyerId = ? ORDER BY date DESC", [userId])
+}
+
 export async function fetchPublishedItems(userId: number): Promise<ItemOverview[]> {
   return await query("SELECT * FROM Item WHERE sellerId = ? ORDER BY publishDate DESC", [userId])
 }

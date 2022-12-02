@@ -38,3 +38,9 @@ export interface DiscoverOverview{
   name: string
   Num_Item:number
 }
+
+export interface BoughtOverview{
+  name: string
+  price: number
+  boughtDate: string
+}
